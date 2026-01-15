@@ -8,8 +8,10 @@ import Farm from "./Farm";
 import Batch from "./Batch";
 import Feed from "./Feed";
 import Market from "./Market";
+import Reports from "./Reports";  
 import Health from "./Health";
 import Settings from "./Settings";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/farm" element={<Farm />} />
         <Route path="/batch" element={<Batch />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/market" element={<Market />} />
         <Route path="/health" element={<Health />} />

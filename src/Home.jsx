@@ -37,7 +37,6 @@ const Home = () => {
       <div className="navbar">
         <div>
           <h2>Poultry Farm Management</h2>
-          <small>Operational Dashboard</small>
         </div>
         <div className="nav-right">
           <span className="user-chip">
@@ -146,7 +145,7 @@ const Home = () => {
               <li>📌 Early mortality detection reduces losses</li>
             </ul>
           </section>
-          <button onClick={() => navigate("/health")}>💊 Health Reports</button>
+         <button onClick={() => navigate("/health")}>💊 Health Reports</button>
 <button onClick={() => navigate("/settings")}>⚙ Settings</button>
 
 
