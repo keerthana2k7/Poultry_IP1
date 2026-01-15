@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Login.css";
 
 function Login() {
@@ -8,7 +9,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Canvas animation
+  // 🎨 Canvas animation (UNCHANGED)
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -68,12 +69,24 @@ function Login() {
     };
   }, []);
 
-  const handleLogin = (e) => {
+  // 🔐 REAL LOGIN (Backend + MongoDB)
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === "admin@gmail.com" && password === "admin123") {
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/users/login",
+        { email, password }
+      );
+
+      alert(res.data.message);
+
+      // Save logged-in user
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
       navigate("/home");
-    } else {
-      alert("Invalid credentials");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -93,6 +106,7 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+
           <input
             type="password"
             placeholder="Password"
@@ -100,10 +114,12 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
           <button type="submit">Login</button>
         </form>
 
-        <p className="demo">admin@gmail.com | admin123</p>
+        {/* Remove demo credentials in production */}
+        {/* <p className="demo">admin@gmail.com | admin123</p> */}
       </div>
     </div>
   );

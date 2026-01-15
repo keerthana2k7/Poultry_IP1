@@ -1,123 +1,159 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+const CountUp = ({ value }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const interval = setInterval(() => {
+      start += Math.ceil(value / 35);
+      if (start >= value) {
+        setCount(value);
+        clearInterval(interval);
+      } else {
+        setCount(start);
+      }
+    }, 20);
+    return () => clearInterval(interval);
+  }, [value]);
+
+  return <span>{count}</span>;
+};
+
 const Home = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const logout = () => {
+    localStorage.clear();
     navigate("/login");
   };
 
   return (
     <>
-      {/* Navbar */}
+      {/* Top Navbar */}
       <div className="navbar">
-        <h2>Poultry Farm Management System</h2>
-        <button onClick={logout}>Logout</button>
+        <div>
+          <h2>Poultry Farm Management</h2>
+          <small>Operational Dashboard</small>
+        </div>
+        <div className="nav-right">
+          <span className="user-chip">
+            {user?.email || "Farmer"}
+          </span>
+          <button onClick={logout}>Logout</button>
+        </div>
       </div>
 
       <div className="layout">
-
         {/* Sidebar */}
-        <div className="sidebar">
-          <button onClick={() => navigate("/home")}>🏠 Home</button>
-          <button onClick={() => navigate("/farm")}>🐔 Farm Management</button>
-          <button onClick={() => navigate("/batch")}>📦 Batch Management</button>
-          <button onClick={() => navigate("/feed")}>🌾 Feed & Expenses</button>
-          <button onClick={() => navigate("/market")}>📈 Market Prices</button>
-        </div>
+        <aside className="sidebar">
+  <button onClick={() => navigate("/home")}>📊 Dashboard</button>
+  <button onClick={() => navigate("/farm")}>🐔 Farm</button>
+  <button onClick={() => navigate("/batch")}>📦 Batches</button>
+  <button onClick={() => navigate("/feed")}>🌾 Feed</button>
+  <button onClick={() => navigate("/health")}>💊 Health</button>
+  <button onClick={() => navigate("/market")}>📈 Market</button>
+  <button onClick={() => navigate("/reports")}>📑 Reports</button>
+  <button onClick={() => navigate("/settings")}>⚙ Settings</button>
+</aside>
+
 
         {/* Main Content */}
-        <div className="content">
+        <main className="content">
 
-          <h2>Welcome, Farmer 👋</h2>
-          <p>
-            This system helps poultry farm owners manage daily farm operations,
-            monitor expenses, track bird health, and view current poultry market
-            prices to improve profitability and reduce losses.
-          </p>
+          {/* Welcome */}
+          <section className="welcome-card">
+            <h2>Good Morning 👋</h2>
+            <p>
+              Welcome back, <strong>{user?.email || "Farm Owner"}</strong>.  
+              Here’s today’s operational summary.
+            </p>
+          </section>
 
-          {/* Dashboard Cards */}
-          <h3>Farm Overview</h3>
-          <div className="cards">
-            <div className="card">
-              <h3>Total Birds</h3>
-              <p>1200</p>
-              <small>Current active birds</small>
+          {/* Quick Actions */}
+          <section className="quick-actions">
+            <button>➕ New Batch</button>
+            <button>💊 Add Medicine</button>
+            <button>🌾 Record Feed</button>
+            <button>📊 Generate Report</button>
+          </section>
+
+          {/* KPI Cards */}
+          <section className="kpi-grid">
+            <div className="kpi-card">
+              <h4>Total Birds</h4>
+              <p><CountUp value={1200} /></p>
+              <span className="trend up">↑ 3%</span>
             </div>
 
-            <div className="card">
-              <h3>Total Expenses</h3>
-              <p>₹ 85,000</p>
-              <small>Feed, medicine & labour</small>
+            <div className="kpi-card">
+              <h4>Expenses (₹)</h4>
+              <p><CountUp value={85000} /></p>
+              <span className="trend down">↓ 1%</span>
             </div>
 
-            <div className="card">
-              <h3>Mortality</h3>
-              <p>25</p>
-              <small>Health indicator</small>
+            <div className="kpi-card">
+              <h4>Mortality</h4>
+              <p><CountUp value={25} /></p>
+              <span className="trend up danger">↑ Alert</span>
             </div>
 
-            <div className="card">
-              <h3>Estimated Profit</h3>
-              <p>₹ 35,000</p>
-              <small>Based on market price</small>
+            <div className="kpi-card">
+              <h4>Estimated Profit (₹)</h4>
+              <p><CountUp value={35000} /></p>
+              <span className="trend up">↑ 6%</span>
             </div>
-          </div>
+          </section>
 
-          {/* Alerts */}
-          <div className="info-box">
-            <h3>⚠ Alerts & Notifications</h3>
+          {/* Health + Status */}
+          <section className="status-grid">
+            <div className="status-card good">
+              <h3>Farm Health</h3>
+              <p>Stable – No critical issues</p>
+            </div>
+
+            <div className="status-card warning">
+              <h3>Feed Consumption</h3>
+              <p>Slightly above normal</p>
+            </div>
+
+            <div className="status-card danger">
+              <h3>Mortality Risk</h3>
+              <p>Monitor closely this week</p>
+            </div>
+          </section>
+
+          {/* Activity Log */}
+          <section className="activity-log">
+            <h3>Recent Activity</h3>
             <ul>
-              <li>Feed cost increased compared to last week</li>
-              <li>Mortality observed in last 3 days</li>
-              <li>Market prices are favorable today</li>
+              <li>✔ Feed expense added – ₹5,000</li>
+              <li>✔ New batch created – 300 birds</li>
+              <li>⚠ Mortality recorded – 2 birds</li>
+              <li>✔ Market prices updated</li>
             </ul>
-          </div>
+          </section>
 
-          {/* Market Prices */}
-          <h3>Today's Market Prices</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Market</th>
-                <th>Egg (₹/unit)</th>
-                <th>Broiler (₹/kg)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Karur</td>
-                <td>6.50</td>
-                <td>180</td>
-              </tr>
-              <tr>
-                <td>Trichy</td>
-                <td>6.20</td>
-                <td>175</td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Benefits */}
-          <div className="info-box">
-            <h3>📌 System Benefits</h3>
+          {/* Insights */}
+          <section className="insights">
+            <h3>System Insights</h3>
             <ul>
-              <li>Digital record keeping instead of manual notebooks</li>
-              <li>Better cost and profit analysis</li>
-              <li>Improved decision-making using market prices</li>
-              <li>Reduced losses through data tracking</li>
+              <li>📌 Buying feed in bulk can save up to 8%</li>
+              <li>📌 Current market trend is favorable</li>
+              <li>📌 Early mortality detection reduces losses</li>
             </ul>
-          </div>
+          </section>
+          <button onClick={() => navigate("/health")}>💊 Health Reports</button>
+<button onClick={() => navigate("/settings")}>⚙ Settings</button>
 
-        </div>
+
+        </main>
       </div>
 
-      {/* Footer */}
-      <footer>
-        © 2026 Poultry Farm Management System
-      </footer>
+      <footer>© 2026 Poultry Farm Management System</footer>
     </>
   );
 };
